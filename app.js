@@ -41,3 +41,23 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDebts();
     renderHistory([]);
 });
+
+
+function settleDebt(debtor, creditor, amount) {
+    // 1. Debtor pays the Creditor
+    const payer = debtor;
+    const paymentAmount = amount;
+    // 2. Use a standard description
+    const description = `${getTranslation('settleDesc')} -> ${creditor}`;
+    // 3. The 'split' is just the Creditor (Debtor pays 100% for Creditor)
+    const splitWith = [creditor];
+
+    // Confirmation dialog
+    if(confirm(`${debtor}, ${creditor} kişisine ${amount} TL ödedi mi?`)) {
+        // Add logic identical to addPayment
+        debtCalculator.addPayment(payer, paymentAmount, splitWith);
+        firebaseService.saveDebts();
+        firebaseService.addTransaction(payer, paymentAmount, description, splitWith);
+        renderDebts();
+    }
+}

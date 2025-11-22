@@ -234,3 +234,61 @@ button:hover {
     font-size: 14px;
     margin-top: 5px;
 }
+
+/* NEW STYLES */
+
+/* 1. Date in History */
+.history-date {
+    font-size: 0.75rem;
+    color: #999;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+/* 2. Settle Up Button */
+.settle-btn {
+    background-color: #2ecc71; /* Green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-left: 10px;
+    width: auto; /* Override global button width */
+}
+
+.settle-btn:hover {
+    background-color: #27ae60;
+}
+
+/* 3. Statistics Section */
+.stats-section {
+    margin-bottom: 30px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}

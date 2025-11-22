@@ -1,4 +1,3 @@
-// Translation management
 const translations = {
     tr: {
         mainTitle: '💰 Grup Borç Takibi',
@@ -19,7 +18,13 @@ const translations = {
         noHistory: 'Henüz işlem yok',
         errorSelectPayer: 'Lütfen ödemeyi yapan kişiyi seçin',
         errorValidAmount: 'Lütfen geçerli bir tutar girin',
-        errorSelectPeople: 'Lütfen en az bir kişi seçin'
+        errorSelectPeople: 'Lütfen en az bir kişi seçin',
+        // NEW TRANSLATIONS
+        settleUp: 'Hesaplaş',
+        settleDesc: 'Borç Kapama',
+        statsTitle: 'Genel Durum',
+        totalSpent: 'Toplam Harcama',
+        mostSpender: 'En Çok Harcayan'
     },
     en: {
         mainTitle: '💰 Group Debt Tracker',
@@ -40,28 +45,19 @@ const translations = {
         noHistory: 'No transactions yet',
         errorSelectPayer: 'Please select who paid',
         errorValidAmount: 'Please enter a valid amount',
-        errorSelectPeople: 'Please select at least one person'
+        errorSelectPeople: 'Please select at least one person',
+        // NEW TRANSLATIONS
+        settleUp: 'Settle Up',
+        settleDesc: 'Settlement',
+        statsTitle: 'Overview',
+        totalSpent: 'Total Spent',
+        mostSpender: 'Top Spender'
     }
 };
 
-let currentLang = appConfig.defaultLanguage;
-
-function getTranslation(key) {
-    return translations[currentLang][key];
-}
-
-function setLanguage(lang) {
-    currentLang = lang;
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
-    
-    updateUIText();
-    renderDebts();
-}
-
+// Also update the updateUIText function at the bottom of the file
 function updateUIText() {
+    // ... keep existing lines ...
     document.getElementById('mainTitle').textContent = getTranslation('mainTitle');
     document.getElementById('addPaymentTitle').textContent = getTranslation('addPaymentTitle');
     document.getElementById('payerLabel').textContent = getTranslation('payerLabel');
@@ -74,4 +70,9 @@ function updateUIText() {
     document.getElementById('addButton').textContent = getTranslation('addButton');
     document.getElementById('debtsTitle').textContent = getTranslation('debtsTitle');
     document.getElementById('historyTitle').textContent = getTranslation('historyTitle');
+    
+    // NEW: Update Stats Title
+    if(document.getElementById('statsTitle')) {
+        document.getElementById('statsTitle').textContent = getTranslation('statsTitle');
+    }
 }
