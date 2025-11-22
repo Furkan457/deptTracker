@@ -23,10 +23,11 @@ function initializeUI() {
 
 function updateSplitOptions() {
     const checkboxes = document.querySelectorAll('#splitGroup input[type="checkbox"]');
-    checkboxes.forEach(cb => { cb.disabled = false; });
+    checkboxes.forEach(cb => {
+        cb.disabled = false;
+    });
 }
 
-// 1. UPDATED: Render Debts with "Settle Up" Button
 function renderDebts() {
     const container = document.getElementById('debtsContainer');
     container.innerHTML = '';
@@ -41,17 +42,17 @@ function renderDebts() {
         
         if (netDebts[creditor] && netDebts[creditor].length > 0) {
             netDebts[creditor].forEach(debt => {
-                // Logic: debt.debtor owes 'creditor' an 'amount'
+                // FIXED: Button is now on its own line below the amount
                 debtsHTML += `
                     <div class="debt-item">
-                        <div style="display:flex; align-items:center; flex:1;">
-                            <span>${debt.debtor} ${getTranslation('owes')}</span>
-                            <button class="settle-btn" 
-                                onclick="settleDebt('${debt.debtor}', '${creditor}', ${debt.amount})">
-                                ${getTranslation('settleUp')}
-                            </button>
+                        <div class="debt-row">
+                            <span class="debt-text">${debt.debtor} ${getTranslation('owes')}</span>
+                            <span class="debt-amount">${debt.amount.toFixed(2)} TL</span>
                         </div>
-                        <span class="debt-amount">${debt.amount.toFixed(2)} TL</span>
+                        <button class="settle-btn" 
+                            onclick="settleDebt('${debt.debtor}', '${creditor}', ${debt.amount})">
+                            🤝 ${getTranslation('settleUp')}
+                        </button>
                     </div>
                 `;
             });
@@ -64,15 +65,14 @@ function renderDebts() {
     });
 }
 
-// 2. NEW: Render Statistics
 function renderStats(transactions) {
     const container = document.getElementById('statsContainer');
-    if (!container) return; // Guard clause
+    if (!container) return;
     container.innerHTML = '';
 
     if (!transactions || transactions.length === 0) return;
 
-    // Calculate totals per person
+    // Calculate totals
     const totals = {};
     appConfig.people.forEach(p => totals[p] = 0);
     
@@ -85,11 +85,9 @@ function renderStats(transactions) {
         }
     });
 
-    // Sort to find top spender
     const sortedPeople = Object.entries(totals).sort((a, b) => b[1] - a[1]);
     const topSpender = sortedPeople[0];
 
-    // Create HTML for cards
     const totalCard = `
         <div class="stat-card">
             <div class="stat-value">${grandTotal.toFixed(2)} TL</div>
@@ -120,12 +118,11 @@ function showError(message) {
     errorDiv.textContent = message;
 }
 
-// 3. UPDATED: Render History with Dates and Fixed Scroll
 function renderHistory(transactions) {
     const container = document.getElementById('historyContainer');
     container.innerHTML = '';
     
-    // Also update stats whenever history updates
+    // Update stats when history updates
     renderStats(transactions);
     
     if (!transactions || transactions.length === 0) {
@@ -136,27 +133,29 @@ function renderHistory(transactions) {
     const historyTable = document.createElement('div');
     historyTable.className = 'history-table';
     
-    // Show ALL transactions, newest first
+    // Show ALL transactions (scrolling enabled in CSS)
     const allTransactions = [...transactions].reverse(); 
     
     allTransactions.forEach(transaction => {
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
         
-        // Format Date (Handle old data that might not have timestamp)
         let dateStr = '';
         if (transaction.timestamp) {
             const date = new Date(transaction.timestamp);
-            dateStr = `<span class="history-date">${date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span>`;
+            dateStr = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' });
         }
 
+        // FIXED: New structure to separate Text and Price
         historyItem.innerHTML = `
             <div class="history-info">
-                ${dateStr}
-                <span class="history-payer">${transaction.payer}</span>
-                <span class="history-description">${transaction.description || '-'}</span>
+                <div class="history-header">
+                    <span class="history-date">${dateStr}</span>
+                    <span class="history-payer">${transaction.payer}</span>
+                </div>
+                <div class="history-description">${transaction.description || '-'}</div>
             </div>
-            <span class="history-amount">${transaction.amount.toFixed(2)} TL</span>
+            <div class="history-amount">${transaction.amount.toFixed(2)} TL</div>
         `;
         
         historyTable.appendChild(historyItem);
