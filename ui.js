@@ -85,10 +85,10 @@ function renderHistory(transactions) {
     const historyTable = document.createElement('div');
     historyTable.className = 'history-table';
     
-    // Show last 20 transactions
-    const recentTransactions = transactions.slice(-20).reverse();
+    // CHANGED: Show ALL transactions, newest first
+    const allTransactions = [...transactions].reverse(); 
     
-    recentTransactions.forEach(transaction => {
+    allTransactions.forEach(transaction => {
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
         
