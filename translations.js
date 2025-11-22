@@ -1,3 +1,6 @@
+// Current language setting (default to Turkish)
+let currentLanguage = typeof appConfig !== 'undefined' ? appConfig.defaultLanguage : 'tr';
+
 const translations = {
     tr: {
         mainTitle: '💰 Grup Borç Takibi',
@@ -55,24 +58,70 @@ const translations = {
     }
 };
 
-// Also update the updateUIText function at the bottom of the file
-function updateUIText() {
-    // ... keep existing lines ...
-    document.getElementById('mainTitle').textContent = getTranslation('mainTitle');
-    document.getElementById('addPaymentTitle').textContent = getTranslation('addPaymentTitle');
-    document.getElementById('payerLabel').textContent = getTranslation('payerLabel');
-    document.getElementById('selectPersonOption').textContent = getTranslation('selectPerson');
-    document.getElementById('amountLabel').textContent = getTranslation('amountLabel');
-    document.getElementById('amount').placeholder = getTranslation('amountPlaceholder');
-    document.getElementById('descriptionLabel').textContent = getTranslation('descriptionLabel');
-    document.getElementById('description').placeholder = getTranslation('descriptionPlaceholder');
-    document.getElementById('splitLabel').textContent = getTranslation('splitLabel');
-    document.getElementById('addButton').textContent = getTranslation('addButton');
-    document.getElementById('debtsTitle').textContent = getTranslation('debtsTitle');
-    document.getElementById('historyTitle').textContent = getTranslation('historyTitle');
-    
-    // NEW: Update Stats Title
-    if(document.getElementById('statsTitle')) {
-        document.getElementById('statsTitle').textContent = getTranslation('statsTitle');
+// Helper function to get translation
+function getTranslation(key) {
+    if (translations[currentLanguage] && translations[currentLanguage][key]) {
+        return translations[currentLanguage][key];
     }
+    return key; // Fallback to key if translation missing
+}
+
+// Function to set language
+function setLanguage(lang) {
+    if (translations[lang]) {
+        currentLanguage = lang;
+        
+        // Update button styles
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.trim().toLowerCase() === lang) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Update all text
+        updateUIText();
+        
+        // Re-render components that use translations
+        if (typeof renderDebts === 'function') renderDebts();
+        
+        // If we have access to transaction data, re-render history and stats
+        if (typeof firebaseService !== 'undefined' && firebaseService.getTransactions) {
+            const transactions = firebaseService.getTransactions();
+            if (typeof renderHistory === 'function') renderHistory(transactions);
+            if (typeof renderStats === 'function') renderStats(transactions);
+        }
+    }
+}
+
+// Function to update static UI text
+function updateUIText() {
+    const elements = {
+        'mainTitle': 'mainTitle',
+        'addPaymentTitle': 'addPaymentTitle',
+        'payerLabel': 'payerLabel',
+        'selectPersonOption': 'selectPerson',
+        'amountLabel': 'amountLabel',
+        'descriptionLabel': 'descriptionLabel',
+        'splitLabel': 'splitLabel',
+        'addButton': 'addButton',
+        'debtsTitle': 'debtsTitle',
+        'historyTitle': 'historyTitle',
+        'statsTitle': 'statsTitle'
+    };
+
+    // Update text content for simple elements
+    for (const [id, key] of Object.entries(elements)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = getTranslation(key);
+        }
+    }
+
+    // Update placeholders
+    const amountInput = document.getElementById('amount');
+    if (amountInput) amountInput.placeholder = getTranslation('amountPlaceholder');
+
+    const descInput = document.getElementById('description');
+    if (descInput) descInput.placeholder = getTranslation('descriptionPlaceholder');
 }
